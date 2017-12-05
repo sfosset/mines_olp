@@ -10,19 +10,26 @@ import threading
 robot = VrepPioneerSimulation()
 #robot = Pioneer(rospy)
 
-network = NN(3, 10, 2)
-
 choice = input('Do you want to load previous network? (y/n) --> ')
 if choice == 'y':
     with open('last_w.json') as fp:
         json_obj = json.load(fp)
 
+    hidden_layer_size = json_obj["hidden_neurons"]
+    network = NN(3, hidden_layer_size, 2)
+
     for i in range(3):
-        for j in range(10):
+        for j in range(hidden_layer_size):
             network.wi[i][j] = json_obj["input_weights"][i][j]
-    for i in range(10):
+    for i in range(hidden_layer_size):
         for j in range(2):
             network.wo[i][j] = json_obj["output_weights"][i][j]
+else:
+    hidden_layer_size = "0"
+    while not hidden_layer_size.isdigit() or int(hidden_layer_size) == 0 :
+        hidden_layer_size = input('Enter hidden layout size. --> ')
+
+    network = NN(3, int(hidden_layer_size), 2)
 
 
 trainer = OnlineTrainer(robot, network)
@@ -73,7 +80,7 @@ while(continue_running):
         continue_running = False
 
 
-json_obj = {"input_weights": network.wi, "output_weights": network.wo}
+json_obj = { "hidden_neurons": hidden_layer_size, "input_weights": network.wi, "output_weights": network.wo}
 with open('last_w.json', 'w') as fp:
     json.dump(json_obj, fp)
 
