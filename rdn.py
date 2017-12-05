@@ -22,10 +22,10 @@ class Pioneer:
         self.sub = rospy.Subscriber("/RosAria/pose", Odometry, self.CB_pos)
 
         self.mySin =0
-    	self.myCos =0
+        self.myCos =0
         self.myPX = 0
-    	self.myPY = 0
-    	self.myPTheta = 0
+        self.myPY = 0
+        self.myPTheta = 0
 
 
     def kill(self):
@@ -45,22 +45,22 @@ class Pioneer:
 
     def CB_pos(self, msg):
         self.mySin = msg.pose.pose.orientation.z
-    	self.myCos = msg.pose.pose.orientation.w
+        self.myCos = msg.pose.pose.orientation.w
         self.myPX = msg.pose.pose.position.x
-    	self.myPY = msg.pose.pose.position.y
-    	self.myPTheta = 2 * atan2(self.mySin, self.myCos)
+        self.myPY = msg.pose.pose.position.y
+        self.myPTheta = 2 * atan2(self.mySin, self.myCos)
 
-    	if (self.myPTheta > 3.1415):
-    		self.myPTheta = self.myPTheta - 6.2830
+        if (self.myPTheta > 3.1415):
+            self.myPTheta = self.myPTheta - 6.2830
 
         #self.upd([mySin,myCos,myPX,myPY, myPTheta])
-        
+
     # def upd(self,list):
     #     self.mySin = list[0]
-    # 	self.myCos = list[1]
+    #     self.myCos = list[1]
     #     self.myPX = list[2]
-    # 	self.myPY = list[3]
-    # 	self.myPTheta = list[4]
+    #     self.myPY = list[3]
+    #     self.myPTheta = list[4]
 
     def set_motor_velocity(self, control):
         """Set a target velocity on the pioneer motors, multiplied by the gain
